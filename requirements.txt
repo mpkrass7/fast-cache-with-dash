@@ -1,0 +1,7 @@
+databricks-sdk
+databricks-sql-connector
+duckdb
+dash
+pandas
+pyarrow
+plotly
