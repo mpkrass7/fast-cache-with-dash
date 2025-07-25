@@ -7,32 +7,7 @@ from visualizations import make_charts, make_data_table, make_summary_cards
 # Initialize the Dash app
 app = dash.Dash(__name__, title="Sales Data Dashboard")
 
-# Add custom CSS for the spinner animation
-app.index_string = """
-<!DOCTYPE html>
-<html>
-    <head>
-        {%metas%}
-        <title>{%title%}</title>
-        {%favicon%}
-        {%css%}
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
-    </head>
-    <body>
-        {%app_entry%}
-        <footer>
-            {%config%}
-            {%scripts%}
-            {%renderer%}
-        </footer>
-    </body>
-</html>
-"""
+
 
 # Filter options
 filter_options = {
@@ -62,14 +37,11 @@ filter_options = {
 app.layout = html.Div(
     [
         # Header
-        html.H1(
-            "Sales Data Dashboard",
-            style={"textAlign": "center", "color": "#2c3e50", "marginBottom": "30px"},
-        ),
+        html.H1("Sales Data Dashboard", style={"textAlign": "center", "marginBottom": "30px"}),
         # Filters Section
         html.Div(
             [
-                html.H3("Filters", style={"color": "#34495e", "marginBottom": "20px"}),
+                html.H3("Filters", style={"marginBottom": "20px"}),
                 # Filter dropdowns in a grid
                 html.Div(
                     [
@@ -80,13 +52,9 @@ app.layout = html.Div(
                                 ),
                                 dcc.Dropdown(
                                     id="payment-method-dropdown",
-                                    options=[
-                                        {"label": method.title(), "value": method}
-                                        for method in filter_options["paymentMethod"]
-                                    ],
+                                    options=[{"label": method.title(), "value": method} for method in filter_options["paymentMethod"]],
                                     placeholder="Select payment method...",
                                     multi=True,
-                                    style={"marginBottom": "15px"},
                                 ),
                             ],
                             style={
@@ -100,13 +68,9 @@ app.layout = html.Div(
                                 html.Label("Product:", style={"fontWeight": "bold"}),
                                 dcc.Dropdown(
                                     id="product-dropdown",
-                                    options=[
-                                        {"label": product, "value": product}
-                                        for product in filter_options["product"]
-                                    ],
+                                    options=[{"label": product, "value": product} for product in filter_options["product"]],
                                     placeholder="Select products...",
                                     multi=True,
-                                    style={"marginBottom": "15px"},
                                 ),
                             ],
                             style={
@@ -120,13 +84,9 @@ app.layout = html.Div(
                                 html.Label("Country:", style={"fontWeight": "bold"}),
                                 dcc.Dropdown(
                                     id="country-dropdown",
-                                    options=[
-                                        {"label": country, "value": country}
-                                        for country in filter_options["country"]
-                                    ],
+                                    options=[{"label": country, "value": country} for country in filter_options["country"]],
                                     placeholder="Select countries...",
                                     multi=True,
-                                    style={"marginBottom": "15px"},
                                 ),
                             ],
                             style={"width": "30%", "display": "inline-block"},
@@ -147,7 +107,6 @@ app.layout = html.Div(
                         "borderRadius": "5px",
                         "fontSize": "16px",
                         "cursor": "pointer",
-                        "marginBottom": "20px",
                     },
                 ),
             ],
@@ -161,15 +120,13 @@ app.layout = html.Div(
         # Results Section
         html.Div(
             [
-                html.H3("Results", style={"color": "#34495e", "marginBottom": "20px"}),
+                html.H3("Results", style={"marginBottom": "20px"}),
                 # Summary cards
                 html.Div(id="summary-cards", style={"marginBottom": "30px"}),
                 # Charts Section
                 html.Div(
                     [
-                        html.H4(
-                            "Charts", style={"color": "#34495e", "marginBottom": "20px"}
-                        ),
+                        html.H4("Charts", style={"marginBottom": "20px"}),
                         # First row of charts
                         html.Div(
                             [
@@ -210,10 +167,7 @@ app.layout = html.Div(
                 # Data Table Section
                 html.Div(
                     [
-                        html.H4(
-                            "Data Table",
-                            style={"color": "#34495e", "marginBottom": "20px"},
-                        ),
+                        html.H4("Data Table", style={"marginBottom": "20px"}),
                         html.Div(id="data-table-container"),
                     ],
                     id="table-section",
@@ -226,7 +180,7 @@ app.layout = html.Div(
         # Store for the data
         dcc.Store(id="data-store"),
     ],
-    style={"padding": "20px", "fontFamily": "Arial, sans-serif"},
+    style={"padding": "20px"},
 )
 
 
