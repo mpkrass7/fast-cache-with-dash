@@ -1,7 +1,7 @@
 import dash
 from dash import Input, Output, State, dcc, html
 
-from db_helpers import get_dataframe
+from db_helpers import query_cache
 from visualizations import make_charts, make_data_table, make_summary_cards
 
 # Initialize the Dash app
@@ -140,64 +140,77 @@ app.layout = html.Div(
                 "right": "0",
                 "bottom": "0",
             },
-            overlay_style={"visibility":"visible", "filter": "blur(2px)"},
-            children=html.Div([
-                # Summary cards
-                html.Div(id="summary-cards", style={"marginBottom": "30px"}),
-                # Charts Section
-                html.Div(
-                    [
-                        html.H4("Charts", style={"marginBottom": "20px"}),
-                        # First row of charts
-                        html.Div(
-                            [
-                                html.Div(
-                                    [dcc.Graph(id="sales-by-product-chart")],
-                                    style={"width": "50%", "display": "inline-block"},
-                                ),
-                                html.Div(
-                                    [dcc.Graph(id="sales-by-country-chart")],
-                                    style={"width": "50%", "display": "inline-block"},
-                                ),
-                            ],
-                            style={"marginBottom": "30px"},
-                        ),
-                        # Second row of charts
-                        html.Div(
-                            [
-                                html.Div(
-                                    [dcc.Graph(id="payment-method-chart")],
-                                    style={"width": "50%", "display": "inline-block"},
-                                ),
-                                html.Div(
-                                    [dcc.Graph(id="quantity-distribution-chart")],
-                                    style={"width": "50%", "display": "inline-block"},
-                                ),
-                            ],
-                            style={"marginBottom": "30px"},
-                        ),
-                        # Third row - time series
-                        html.Div(
-                            [dcc.Graph(id="sales-timeline-chart")],
-                            style={"marginBottom": "30px"},
-                        ),
-                    ],
-                    id="charts-section",
-                    style={"display": "none"},
-                ),
-                # Data Table Section
-                html.Div(
-                    [
-                        html.H4("Data Table", style={"marginBottom": "20px"}),
-                        html.Div(id="data-table-container"),
-                    ],
-                    id="table-section",
-                    style={"display": "none"},
-                ),
-            ],
-            id="results-section",
-            style={"display": "none"},
-        ),
+            overlay_style={"visibility": "visible", "filter": "blur(2px)"},
+            children=html.Div(
+                [
+                    # Summary cards
+                    html.Div(id="summary-cards", style={"marginBottom": "30px"}),
+                    # Charts Section
+                    html.Div(
+                        [
+                            html.H4("Charts", style={"marginBottom": "20px"}),
+                            # First row of charts
+                            html.Div(
+                                [
+                                    html.Div(
+                                        [dcc.Graph(id="sales-by-product-chart")],
+                                        style={
+                                            "width": "50%",
+                                            "display": "inline-block",
+                                        },
+                                    ),
+                                    html.Div(
+                                        [dcc.Graph(id="sales-by-country-chart")],
+                                        style={
+                                            "width": "50%",
+                                            "display": "inline-block",
+                                        },
+                                    ),
+                                ],
+                                style={"marginBottom": "30px"},
+                            ),
+                            # Second row of charts
+                            html.Div(
+                                [
+                                    html.Div(
+                                        [dcc.Graph(id="payment-method-chart")],
+                                        style={
+                                            "width": "50%",
+                                            "display": "inline-block",
+                                        },
+                                    ),
+                                    html.Div(
+                                        [dcc.Graph(id="quantity-distribution-chart")],
+                                        style={
+                                            "width": "50%",
+                                            "display": "inline-block",
+                                        },
+                                    ),
+                                ],
+                                style={"marginBottom": "30px"},
+                            ),
+                            # Third row - time series
+                            html.Div(
+                                [dcc.Graph(id="sales-timeline-chart")],
+                                style={"marginBottom": "30px"},
+                            ),
+                        ],
+                        id="charts-section",
+                        style={"display": "none"},
+                    ),
+                    # Data Table Section
+                    html.Div(
+                        [
+                            html.H4("Data Table", style={"marginBottom": "20px"}),
+                            html.Div(id="data-table-container"),
+                        ],
+                        id="table-section",
+                        style={"display": "none"},
+                    ),
+                ],
+                id="results-section",
+                style={"display": "none"},
+            ),
         ),
         # Store for the data
         dcc.Store(id="data-store"),
@@ -235,7 +248,7 @@ def query_data(n_clicks, payment_method, product, country):
         if country:
             filters["country"] = country if isinstance(country, list) else [country]
 
-        df = get_dataframe(filters)
+        df = query_cache.get(filters)
 
         # Convert to JSON for storage
         data = df.to_dict("records")
