@@ -26,6 +26,7 @@ def get_connection():
         catalog=catalog,
         schema=schema,
     )
+conn = get_connection()
 
 
 def _read_table_from_databricks_sql(
@@ -47,7 +48,7 @@ JOIN sales_franchises ON sales_transactions.franchiseID = sales_franchises.franc
         """
         cursor.execute(query)
         results = cursor.fetchall_arrow().to_pandas()
-        time.sleep(3)  # To help make it more obvious that the query is running
+        # time.sleep(3)  # To help make it more obvious that the query is running
         return results
 
 
@@ -79,7 +80,7 @@ def _create_filter_hash(filters: dict[str, list | str]) -> str:
     return hashlib.md5(s.encode("utf-8")).hexdigest()[:8]
 
 
-def get_dataframe(conn, filters: dict[str, list | str]) -> pd.DataFrame:
+def get_dataframe(filters: dict[str, list | str]) -> pd.DataFrame:
     """
     Given a table name and a dictionary of filters, return a pandas dataframe
     of the results.

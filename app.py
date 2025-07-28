@@ -1,12 +1,11 @@
 import dash
 from dash import Input, Output, State, dcc, html
 
-from db_helpers import get_connection, get_dataframe
+from db_helpers import get_dataframe
 from visualizations import make_charts, make_data_table, make_summary_cards
 
 # Initialize the Dash app
 app = dash.Dash(__name__, title="Sales Data Dashboard")
-
 
 
 # Filter options
@@ -37,7 +36,10 @@ filter_options = {
 app.layout = html.Div(
     [
         # Header
-        html.H1("Sales Data Dashboard", style={"textAlign": "center", "marginBottom": "30px"}),
+        html.H1(
+            "Sales Data Dashboard",
+            style={"textAlign": "center", "marginBottom": "30px"},
+        ),
         # Filters Section
         html.Div(
             [
@@ -52,7 +54,10 @@ app.layout = html.Div(
                                 ),
                                 dcc.Dropdown(
                                     id="payment-method-dropdown",
-                                    options=[{"label": method.title(), "value": method} for method in filter_options["paymentMethod"]],
+                                    options=[
+                                        {"label": method.title(), "value": method}
+                                        for method in filter_options["paymentMethod"]
+                                    ],
                                     placeholder="Select payment method...",
                                     multi=True,
                                 ),
@@ -68,7 +73,10 @@ app.layout = html.Div(
                                 html.Label("Product:", style={"fontWeight": "bold"}),
                                 dcc.Dropdown(
                                     id="product-dropdown",
-                                    options=[{"label": product, "value": product} for product in filter_options["product"]],
+                                    options=[
+                                        {"label": product, "value": product}
+                                        for product in filter_options["product"]
+                                    ],
                                     placeholder="Select products...",
                                     multi=True,
                                 ),
@@ -84,7 +92,10 @@ app.layout = html.Div(
                                 html.Label("Country:", style={"fontWeight": "bold"}),
                                 dcc.Dropdown(
                                     id="country-dropdown",
-                                    options=[{"label": country, "value": country} for country in filter_options["country"]],
+                                    options=[
+                                        {"label": country, "value": country}
+                                        for country in filter_options["country"]
+                                    ],
                                     placeholder="Select countries...",
                                     multi=True,
                                 ),
@@ -118,9 +129,19 @@ app.layout = html.Div(
             },
         ),
         # Results Section
-        html.Div(
-            [
-                html.H3("Results", style={"marginBottom": "20px"}),
+        dcc.Loading(
+            id="loading-query-button",
+            type="circle",
+            # Set to top of div
+            style={
+                "position": "absolute",
+                "top": "0",
+                "left": "0",
+                "right": "0",
+                "bottom": "0",
+            },
+            overlay_style={"visibility":"visible", "filter": "blur(2px)"},
+            children=html.Div([
                 # Summary cards
                 html.Div(id="summary-cards", style={"marginBottom": "30px"}),
                 # Charts Section
@@ -177,6 +198,7 @@ app.layout = html.Div(
             id="results-section",
             style={"display": "none"},
         ),
+        ),
         # Store for the data
         dcc.Store(id="data-store"),
     ],
@@ -201,7 +223,6 @@ app.layout = html.Div(
 def query_data(n_clicks, payment_method, product, country):
     if n_clicks == 0:
         return None, {"display": "none"}
-
     try:
         # Build filters dictionary
         filters = {}
@@ -214,10 +235,7 @@ def query_data(n_clicks, payment_method, product, country):
         if country:
             filters["country"] = country if isinstance(country, list) else [country]
 
-        # Get connection and data
-        conn = get_connection()
-        df = get_dataframe(conn, filters)
-        conn.close()
+        df = get_dataframe(filters)
 
         # Convert to JSON for storage
         data = df.to_dict("records")
