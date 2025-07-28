@@ -17,11 +17,12 @@ schema = "bakehouse"
 http_path = f"/sql/1.0/warehouses/{os.getenv('WAREHOUSE_ID', '072b588d901e6eed')}"
 
 class QueryCache:
-    def __init__(self, dbsql_conn, max_size_mb: int, ttl: int=120):
+    def __init__(self, db_config, http_path: str, max_size_mb: int, ttl: int=120):
         self.max_size_mb = max_size_mb
         self.current_size_mb = 0
         self.duckdb = duckdb.connect(":memory:")
-        self.dbsql_conn = dbsql_conn
+        self.db_config = db_config
+        self.db_http_path = http_path
         self.ttl = ttl  # Time to live in seconds
         self.create_table_if_not_exists()
         self.check_and_manage_duckdb_size()
@@ -80,11 +81,18 @@ class QueryCache:
         Given a table name and a dictionary of filters, return a pandas dataframe
         of the results from the Databricks SQL API.
         """
-        with self.dbsql_conn.cursor() as cursor:
-            cursor.execute(query)
-            results = cursor.fetchall_arrow().to_pandas()
-            # time.sleep(3)  # To help make it more obvious that the query is running
-            return results
+
+        with sql.connect(
+            server_hostname=self.db_config.host,
+            http_path=self.db_http_path,
+            credentials_provider=lambda: self.db_config.authenticate,
+            catalog=catalog,
+            schema=schema,
+        ) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                results = cursor.fetchall_arrow().to_pandas()
+                return results
 
     def get(self, filters: dict[str, list | str]):
         """
@@ -225,16 +233,9 @@ def get_dbsql_connection():
     """
     Given an http path, return a connection to the Databricks SQL API.
     """
-    return sql.connect(
-        server_hostname=cfg.host,
-        http_path=http_path,
-        credentials_provider=lambda: cfg.authenticate,
-        catalog=catalog,
-        schema=schema,
-    )
+    
 
-conn = get_dbsql_connection()
-query_cache = QueryCache(conn, max_size_mb=100, ttl=120)
+query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=120)
 
 # Example usage
 if __name__ == "__main__":
@@ -250,4 +251,3 @@ if __name__ == "__main__":
     print(query_cache.get(filters).head(10))
     query_cache.get(filters).to_csv("sample_data.csv", index=False)
     print("Third dataframe retrieved")
-    conn.close()
