@@ -1,4 +1,4 @@
-# Sales Data Dashboard 📊
+# Fast Cache with Dash and DuckDB 📊
 
 A modern Dash dashboard that demonstrates **in-memory caching** with Databricks SQL using the **bakehouse schema**. 
 
@@ -48,3 +48,7 @@ make format       # Format code
 - `app.py` - Main Dash application
 - `db_helpers.py` - Databricks connection & caching
 - `visualizations.py` - Chart & table components
+
+
+Credit:
+    - Soumil Shah's implementation of a Postgres Query Cache with DuckDB: https://github.com/soumilshah1995/PostgresQueryCache-DuckDB/tree/main
