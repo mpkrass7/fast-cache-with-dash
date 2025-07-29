@@ -1,4 +1,4 @@
-.PHONY: install install-dev run run-demo clean lint format check typecheck
+.PHONY: install install-dev run run-demo clean lint format check typecheck test test-cov
 
 # Install production dependencies using uv
 install:
@@ -42,6 +42,14 @@ clean:
 	find . -type d -name ".ruff_cache" -delete
 	find . -type d -name ".mypy_cache" -delete
 
+# Run tests with pytest
+test:
+	python -m pytest tests/ -v
+
+# Run tests with coverage
+test-cov:
+	python -m pytest tests/ -v --cov=. --cov-report=html --cov-report=term
+
 # Help
 help:
 	@echo "Available commands:"
@@ -53,5 +61,7 @@ help:
 	@echo "  format      - Format code with ruff and isort"
 	@echo "  typecheck   - Run type checking with mypy"
 	@echo "  check       - Run linting and formatting checks"
+	@echo "  test        - Run tests with pytest"
+	@echo "  test-cov    - Run tests with coverage"
 	@echo "  clean       - Clean up temporary files"
 	@echo "  help        - Show this help message" 

@@ -18,6 +18,9 @@ dependencies = [
     "pyarrow",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
 [project.optional-dependencies]
 dev = [
     "ruff",

@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta
 import hashlib
 import os
-from functools import lru_cache
 import sys
+from datetime import datetime, timedelta
+from functools import lru_cache
 from io import StringIO
-import time
 
 import duckdb
 import pandas as pd
@@ -16,8 +15,9 @@ catalog = "samples"
 schema = "bakehouse"
 http_path = f"/sql/1.0/warehouses/{os.getenv('WAREHOUSE_ID', '072b588d901e6eed')}"
 
+
 class QueryCache:
-    def __init__(self, db_config, http_path: str, max_size_mb: int, ttl: int=120):
+    def __init__(self, db_config, http_path: str, max_size_mb: int, ttl: int = 120):
         self.max_size_mb = max_size_mb
         self.current_size_mb = 0
         self.duckdb = duckdb.connect(":memory:")
@@ -26,6 +26,11 @@ class QueryCache:
         self.ttl = ttl  # Time to live in seconds
         self.create_table_if_not_exists()
         self.check_and_manage_duckdb_size()
+        self.baseline_query = """
+        SELECT dateTime, product, quantity, unitPrice, totalPrice, paymentMethod, city, country, size from sales_transactions
+        JOIN sales_franchises ON sales_transactions.franchiseID = sales_franchises.franchiseID
+        WHERE 1=1
+        """
 
     def create_table_if_not_exists(self):
         """Create the DuckDB cache table if it doesn't exist"""
@@ -62,21 +67,15 @@ class QueryCache:
 
         return where_clause
 
-    @staticmethod
-    def build_query(filters: dict[str, list | str]) -> str:
-        predicates = QueryCache._create_where_clause(filters)
+    def build_query(self, filters: dict[str, list | str]) -> str:
+        predicates = self._create_where_clause(filters)
         return f"""
-        SELECT dateTime, product, quantity, unitPrice, totalPrice, paymentMethod, city, country, size from sales_transactions
-        JOIN sales_franchises ON sales_transactions.franchiseID = sales_franchises.franchiseID
-        WHERE 1=1
+        {self.baseline_query}
         {predicates}
         ;
         """
-    
-    def read_table_from_databricks_sql(
-        self,
-        query: str
-    ) -> pd.DataFrame:
+
+    def read_table_from_databricks_sql(self, query: str) -> pd.DataFrame:
         """
         Given a table name and a dictionary of filters, return a pandas dataframe
         of the results from the Databricks SQL API.
@@ -104,7 +103,7 @@ class QueryCache:
         If the query is expired, it will be removed from the cache and queried from the Databricks SQL API.
         If the query is not in the cache or expired, it will be queried from the Databricks SQL API
         and stored in the cache.
-        
+
         Args:
             filters: A dictionary of filters to apply to the query.
 
@@ -123,19 +122,17 @@ class QueryCache:
             if duckdb_timestamp and datetime.now() - duckdb_timestamp < timedelta(
                 seconds=self.ttl
             ):
-                print(f"DuckDB Cache Hit: Query served from DuckDB cache.")
+                print("DuckDB Cache Hit: Query served from DuckDB cache.")
                 return result
             else:
                 # If expired, remove from DuckDB and query DBSQL
                 self.remove_from_duckdb(query_hash)
-                print(
-                    f"DuckDB Cache Miss: Query expired in DuckDB, querying DBSQL."
-                )
+                print("DuckDB Cache Miss: Query expired in DuckDB, querying DBSQL.")
 
         # Query Postgres if not in cache or expired
         result = self.read_table_from_databricks_sql(query)
         self.store_in_duckdb(query_hash, query, result)
-        print(f"Databricks SQL Call: Query served from Databricks SQL.")
+        print("Databricks SQL Call: Query served from Databricks SQL.")
         return result
 
     def get_from_duckdb(self, query_hash):
@@ -228,12 +225,13 @@ class QueryCache:
         """Close DuckDB connection"""
         self.duckdb.close()
 
+
 @lru_cache(maxsize=1)
 def get_dbsql_connection():
     """
     Given an http path, return a connection to the Databricks SQL API.
     """
-    
+
 
 query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=120)
 
