@@ -233,7 +233,7 @@ def get_dbsql_connection():
     """
 
 
-query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=120)
+query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=60*60*24)
 
 # Example usage
 if __name__ == "__main__":

@@ -1,8 +1,12 @@
 # Fast Cache with Dash and DuckDB 📊
 
-A modern Dash dashboard that demonstrates **in-memory caching** with Databricks SQL using the **bakehouse schema**. 
+Memoization is a technique used to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
+
+This is a basic Dash web application that demonstrates **in-memory caching** of Databricks SQL queries on the **bakehouse schema** using DuckDB. 
 
 ## 🚀 Quick Start
+
+Make sure you have a virtual environment with uv installed.
 
 1. **Install dependencies:**
 ```bash
