@@ -22,11 +22,14 @@ jobs:
           pip install -r src/requirements.txt
 
       - run: |
-          pip install pytest ruff streamlit
+          pip install pytest ruff
 
       - uses: astral-sh/ruff-action@v3
         with:
           src: "./src"
 
-      - run: |
-          python -m pytest src/tests -v
+      - run: python -m pytest src/tests -v
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
