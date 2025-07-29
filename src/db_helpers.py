@@ -10,7 +10,6 @@ import pandas as pd
 from databricks import sql
 from databricks.sdk.core import Config
 
-
 cfg = Config()  # Set the DATABRICKS_HOST environment variable when running locally
 catalog = "samples"
 schema = "bakehouse"
@@ -176,7 +175,14 @@ class QueryCache:
             # Insert the query and result into DuckDB
             self.duckdb.execute(
                 "INSERT INTO cached_queries VALUES (?, ?, ?, ?, ?, ?)",
-                [query_hash, query, result.to_csv(index=False), datetime.now(), result_size, result_records],
+                [
+                    query_hash,
+                    query,
+                    result.to_csv(index=False),
+                    datetime.now(),
+                    result_size,
+                    result_records,
+                ],
             )
             self.duckdb.commit()
             print("Successfully stored query in DuckDB")
@@ -198,7 +204,9 @@ class QueryCache:
     def check_and_manage_duckdb_size(self):
         """Check if DuckDB file size exceeds the limit and manage cache size"""
 
-        db_size_mb, db_records = self.duckdb.execute("SELECT coalesce(SUM(result_size), 0), coalesce(SUM(result_records), 0) FROM cached_queries").fetchone()
+        db_size_mb, db_records = self.duckdb.execute(
+            "SELECT coalesce(SUM(result_size), 0), coalesce(SUM(result_records), 0) FROM cached_queries"
+        ).fetchone()
         print(f"DB Size: {round(db_size_mb, 4)} MB, DB Records: {db_records}")
         if db_size_mb > self.max_size_mb:
             # If the size exceeds the limit, remove older queries
@@ -237,7 +245,7 @@ def get_dbsql_connection():
     """
 
 
-query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=60*60*24)
+query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=60 * 60 * 24)
 
 # Example usage
 if __name__ == "__main__":
