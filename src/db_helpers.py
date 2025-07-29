@@ -10,10 +10,11 @@ import pandas as pd
 from databricks import sql
 from databricks.sdk.core import Config
 
-cfg = Config()  # Set the DATABRICKS_HOST environment variable when running locally
 catalog = "samples"
 schema = "bakehouse"
 http_path = f"/sql/1.0/warehouses/{os.getenv('WAREHOUSE_ID', '072b588d901e6eed')}"
+
+cfg = Config()
 
 
 class QueryCache:
