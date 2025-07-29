@@ -10,6 +10,7 @@ import pandas as pd
 from databricks import sql
 from databricks.sdk.core import Config
 
+
 cfg = Config()  # Set the DATABRICKS_HOST environment variable when running locally
 catalog = "samples"
 schema = "bakehouse"
@@ -40,7 +41,9 @@ class QueryCache:
                     query_hash TEXT,
                     query TEXT,
                     result TEXT,
-                    timestamp TIMESTAMP
+                    timestamp TIMESTAMP,
+                    result_size FLOAT,
+                    result_records INTEGER
                 )
             """)
             self.duckdb.commit()
@@ -131,7 +134,8 @@ class QueryCache:
 
         # Query Postgres if not in cache or expired
         result = self.read_table_from_databricks_sql(query)
-        self.store_in_duckdb(query_hash, query, result)
+        size, records = sys.getsizeof(result) / (1024 * 1024), len(result)
+        self.store_in_duckdb(query_hash, query, result, size, records)
         print("Databricks SQL Call: Query served from Databricks SQL.")
         return result
 
@@ -166,13 +170,13 @@ class QueryCache:
             print(f"Error retrieving timestamp from DuckDB: {e}")
             return None
 
-    def store_in_duckdb(self, query_hash, query, result):
+    def store_in_duckdb(self, query_hash, query, result, result_size, result_records):
         """Store the query result in DuckDB"""
         try:
             # Insert the query and result into DuckDB
             self.duckdb.execute(
-                "INSERT INTO cached_queries VALUES (?, ?, ?, ?)",
-                [query_hash, query, result.to_csv(index=False), datetime.now()],
+                "INSERT INTO cached_queries VALUES (?, ?, ?, ?, ?, ?)",
+                [query_hash, query, result.to_csv(index=False), datetime.now(), result_size, result_records],
             )
             self.duckdb.commit()
             print("Successfully stored query in DuckDB")
@@ -194,8 +198,8 @@ class QueryCache:
     def check_and_manage_duckdb_size(self):
         """Check if DuckDB file size exceeds the limit and manage cache size"""
 
-        db_size_mb = sys.getsizeof(self.duckdb) / (1024 * 1024)
-        print(f"DB Size: {db_size_mb} MB")
+        db_size_mb, db_records = self.duckdb.execute("SELECT coalesce(SUM(result_size), 0), coalesce(SUM(result_records), 0) FROM cached_queries").fetchone()
+        print(f"DB Size: {round(db_size_mb, 4)} MB, DB Records: {db_records}")
         if db_size_mb > self.max_size_mb:
             # If the size exceeds the limit, remove older queries
             self.remove_older_queries_from_duckdb()
@@ -247,5 +251,6 @@ if __name__ == "__main__":
     query_cache.get(filters)
     print("Second dataframe retrieved")
     print(query_cache.get(filters).head(10))
+
     query_cache.get(filters).to_csv("sample_data.csv", index=False)
     print("Third dataframe retrieved")
