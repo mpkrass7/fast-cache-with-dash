@@ -56,6 +56,15 @@ make lint         # Run linting
 - Github Actions are used to run tests and deploy the app to Databricks.
 - Databricks Asset Bundles are used to deploy the app to Databricks.
 
+## 🌍 Reproducing in Another Environment
+
+- Fork the repo
+- Replace the datawarehouse id in the databricks.yml file with the id of the datawarehouse you want to use.
+- Follow the steps in Apps cookbook to create a service principal and add the host, client id and secret to your github repo: https://apps-cookbook.dev/blog/automate-apps-deployments-dabs#preparing-your-service-principal
+- Pushed changes will trigger tests suite to run
+- On the github UI, create a release to trigger the pipeline to deploy the app to Databricks
+
 ## 📚 Credits
 
 - Soumil Shah's implementation of a Postgres Query Cache with DuckDB: https://github.com/soumilshah1995/PostgresQueryCache-DuckDB/tree/main
+- Pascal Vogel and Antonio Samaniego Jurado's blog post on automating app deployments to Databricks: https://apps-cookbook.dev/blog/automate-apps-deployments-dabs
