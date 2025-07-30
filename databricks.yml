@@ -7,6 +7,11 @@ resources:
       name: "dash-with-cache-app"
       source_code_path: ./src
       description: "A dash app for in memory caching of databricks sql queries"
+      resources:
+        - name: "sql_warehouse"
+          sql_warehouse:
+            id: "072b588d901e6eed"
+            permission: CAN_USE
 
 targets:
   dev:
@@ -19,6 +24,7 @@ targets:
         dash-with-cache:
           name: "dash-with-cache-app-dev"
           source_code_path: ./src
+      
   prod:
     mode: production
     workspace:
