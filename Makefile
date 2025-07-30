@@ -2,20 +2,17 @@
 
 # Install production dependencies using uv
 install:
-	uv pip install -r requirements.txt
+	uv pip install -r src/requirements.txt
 
 # Install development dependencies using uv
 install-dev:
-	uv pip install -r requirements.txt
+	uv pip install -r src/requirements.txt
 	uv pip install ruff isort mypy
 
 # Run the main application (connects to Databricks)
 run:
-	python app.py
+	uv run python src/app.py
 
-# Run the demo application (uses sample data)
-run-demo:
-	python demo_app.py
 
 # Lint code with ruff
 lint:
@@ -23,17 +20,10 @@ lint:
 	ruff check . --fix
 	isort .
 
-# Format code with ruff and isort
-format:
-	ruff format .
-	isort .
 
 # Run type checking with mypy
 typecheck:
 	mypy . --ignore-missing-imports
-
-# Run all code quality checks (linting and formatting only)
-check: lint format
 
 # Clean up any temporary files
 clean:
@@ -44,11 +34,11 @@ clean:
 
 # Run tests with pytest
 test:
-	python -m pytest tests/ -v
+	uv run python -m pytest src/tests/ -v
 
 # Run tests with coverage
 test-cov:
-	python -m pytest tests/ -v --cov=. --cov-report=html --cov-report=term
+	uv run python -m pytest src/tests/ -v --cov=. --cov-report=html --cov-report=term
 
 # Help
 help:
