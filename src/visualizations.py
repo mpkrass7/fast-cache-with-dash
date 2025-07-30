@@ -16,77 +16,59 @@ def make_summary_cards(
     avg_transaction = df["totalPrice"].mean()
     unique_products = df["product"].nunique()
 
+    # Common card style
+    card_style = {
+        "backgroundColor": "white",
+        "padding": "20px",
+        "borderRadius": "8px",
+        "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
+        "textAlign": "center",
+        "width": "23%",
+        "display": "inline-block",
+        "marginRight": "2%",
+    }
+
+    text_style = {
+        "margin": "0",
+        "fontSize": "14px",
+    }
+
     cards = [
         html.Div(
             [
                 html.H4(
                     f"${total_sales:,.2f}", style={"color": "#27ae60", "margin": "0"}
                 ),
-                html.P("Total Sales", style={"margin": "0", "fontSize": "14px"}),
+                html.P("Total Sales", style=text_style),
             ],
-            style={
-                "backgroundColor": "white",
-                "padding": "20px",
-                "borderRadius": "8px",
-                "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
-                "textAlign": "center",
-                "width": "23%",
-                "display": "inline-block",
-                "marginRight": "2%",
-            },
+            style=card_style,
         ),
         html.Div(
             [
                 html.H4(
                     f"{total_transactions:,}", style={"color": "#3498db", "margin": "0"}
                 ),
-                html.P("Total Transactions", style={"margin": "0", "fontSize": "14px"}),
+                html.P("Total Transactions", style=text_style),
             ],
-            style={
-                "backgroundColor": "white",
-                "padding": "20px",
-                "borderRadius": "8px",
-                "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
-                "textAlign": "center",
-                "width": "23%",
-                "display": "inline-block",
-                "marginRight": "2%",
-            },
+            style=card_style,
         ),
         html.Div(
             [
                 html.H4(
                     f"${avg_transaction:.2f}", style={"color": "#f39c12", "margin": "0"}
                 ),
-                html.P("Avg Transaction", style={"margin": "0", "fontSize": "14px"}),
+                html.P("Avg Transaction", style=text_style),
             ],
-            style={
-                "backgroundColor": "white",
-                "padding": "20px",
-                "borderRadius": "8px",
-                "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
-                "textAlign": "center",
-                "width": "23%",
-                "display": "inline-block",
-                "marginRight": "2%",
-            },
+            style=card_style,
         ),
         html.Div(
             [
                 html.H4(
                     f"{unique_products}", style={"color": "#9b59b6", "margin": "0"}
                 ),
-                html.P("Unique Products", style={"margin": "0", "fontSize": "14px"}),
+                html.P("Unique Products", style=text_style),
             ],
-            style={
-                "backgroundColor": "white",
-                "padding": "20px",
-                "borderRadius": "8px",
-                "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
-                "textAlign": "center",
-                "width": "23%",
-                "display": "inline-block",
-            },
+            style={**card_style, "marginRight": "0"},
         ),
     ]
     return cards
@@ -115,7 +97,28 @@ def make_charts(
         color=product_sales.values,
         color_continuous_scale="Blues",
     )
-    product_chart.update_layout(height=400, showlegend=False)
+    product_chart.update_layout(
+        height=400,
+        showlegend=False,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        xaxis={
+            "showgrid": False,
+            "showline": True,
+            "linecolor": "black",
+            "linewidth": 1,
+        },
+        yaxis={
+            "showgrid": False,
+            "showline": True,
+            "linecolor": "black",
+            "linewidth": 1,
+        },
+    )
+    product_chart.update_traces(
+        hovertemplate="<b>%{y}</b><br>Total Sales: $%{x:,.2f}<extra></extra>",
+        hoverlabel={"bgcolor": "white", "font_size": 12},
+    )
 
     # 2. Sales by Country
     country_sales = (
@@ -130,7 +133,28 @@ def make_charts(
         color=country_sales.values,
         color_continuous_scale="Greens",
     )
-    country_chart.update_layout(height=400, showlegend=False)
+    country_chart.update_layout(
+        height=400,
+        showlegend=False,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        xaxis={
+            "showgrid": False,
+            "showline": True,
+            "linecolor": "black",
+            "linewidth": 1,
+        },
+        yaxis={
+            "showgrid": False,
+            "showline": True,
+            "linecolor": "black",
+            "linewidth": 1,
+        },
+    )
+    country_chart.update_traces(
+        hovertemplate="<b>%{y}</b><br>Total Sales: $%{x:,.2f}<extra></extra>",
+        hoverlabel={"bgcolor": "white", "font_size": 12},
+    )
 
     # 3. Payment Method Distribution
     payment_counts = df["paymentMethod"].value_counts()
@@ -138,8 +162,13 @@ def make_charts(
         values=payment_counts.values,
         names=payment_counts.index,
         title="Transactions by Payment Method",
+        hole=0.4,  # Creates a donut chart
     )
-    payment_chart.update_layout(height=400)
+    payment_chart.update_layout(height=400, plot_bgcolor="white", paper_bgcolor="white")
+    payment_chart.update_traces(
+        hovertemplate="<b>%{label}</b><br>Transactions: %{value}<br>Percentage: %{percent:.1%}<extra></extra>",
+        hoverlabel={"bgcolor": "white", "font_size": 12},
+    )
 
     # 4. Quantity Distribution
     quantity_chart = px.histogram(
@@ -149,7 +178,27 @@ def make_charts(
         title="Distribution of Quantities",
         labels={"quantity": "Quantity", "count": "Number of Transactions"},
     )
-    quantity_chart.update_layout(height=400)
+    quantity_chart.update_layout(
+        height=400,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        xaxis={
+            "showgrid": False,
+            "showline": True,
+            "linecolor": "black",
+            "linewidth": 1,
+        },
+        yaxis={
+            "showgrid": False,
+            "showline": True,
+            "linecolor": "black",
+            "linewidth": 1,
+        },
+    )
+    quantity_chart.update_traces(
+        hovertemplate="<b>Quantity Range</b><br>Quantity: %{x}<br>Transactions: %{y}<extra></extra>",
+        hoverlabel={"bgcolor": "white", "font_size": 12},
+    )
 
     # 5. Sales Timeline
     if "dateTime" in df.columns:
@@ -161,11 +210,41 @@ def make_charts(
             y="totalPrice",
             title="Daily Sales Timeline",
             labels={"date": "Date", "totalPrice": "Total Sales ($)"},
+            line_shape="linear",
         )
-        timeline_chart.update_layout(height=400)
+        timeline_chart.update_layout(
+            height=400,
+            plot_bgcolor="white",
+            paper_bgcolor="white",
+            xaxis={
+                "showgrid": False,
+                "showline": True,
+                "linecolor": "black",
+                "linewidth": 1,
+            },
+            yaxis={
+                "showgrid": False,
+                "showline": True,
+                "linecolor": "black",
+                "linewidth": 1,
+            },
+        )
+        timeline_chart.update_traces(
+            hovertemplate="<b>%{x}</b><br>Total Sales: $%{y:,.2f}<extra></extra>",
+            hoverlabel={"bgcolor": "white", "font_size": 12},
+            line={"width": 3, "color": "#3498db"},
+            mode="lines+markers",
+            marker={
+                "size": 10,
+                "color": "#3498db",
+                "line": {"width": 1, "color": "white"},
+            },
+        )
     else:
         timeline_chart = px.line(title="Daily Sales Timeline (No date data available)")
-        timeline_chart.update_layout(height=400)
+        timeline_chart.update_layout(
+            height=400, plot_bgcolor="white", paper_bgcolor="white"
+        )
 
     return (
         {"display": "block"},
