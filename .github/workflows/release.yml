@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
 
-      - run: databricks bundle run hello-world-app
+      - run: databricks bundle run dash-with-cache
         working-directory: .
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
