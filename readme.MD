@@ -37,22 +37,25 @@ python app.py
 - **Dash** for the web interface
 - **DuckDB** for in-memory caching
 - **Databricks SQL** for data source
-- **Plotly** for visualizations
 
 ## 🛠️ Development
 
 ```bash
 make install-dev  # Install dev tools
 make lint         # Run linting
-make format       # Format code
 ```
 
-## 📁 Files
+## 📁 Source Files
 
-- `app.py` - Main Dash application
-- `db_helpers.py` - Databricks connection & caching
-- `visualizations.py` - Chart & table components
+- `src/app.py` - Main Dash application
+- `src/db_helpers.py` - Databricks connection & caching
+- `src/visualizations.py` - Chart & table components
 
+## 📦 CI/CD
 
-Credit:
-    - Soumil Shah's implementation of a Postgres Query Cache with DuckDB: https://github.com/soumilshah1995/PostgresQueryCache-DuckDB/tree/main
+- Github Actions are used to run tests and deploy the app to Databricks.
+- Databricks Asset Bundles are used to deploy the app to Databricks.
+
+## 📚 Credits
+
+- Soumil Shah's implementation of a Postgres Query Cache with DuckDB: https://github.com/soumilshah1995/PostgresQueryCache-DuckDB/tree/main

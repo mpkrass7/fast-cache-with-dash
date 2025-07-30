@@ -14,11 +14,6 @@ This directory contains unit tests for the `db_helpers` module.
 make test
 ```
 
-### Run tests with coverage:
-```bash
-make test-cov
-```
-
 ### Run specific test file:
 ```bash
 python -m pytest tests/test_db_helpers.py -v
@@ -36,15 +31,7 @@ python -m pytest tests/test_db_helpers.py::TestQueryCache::test_query_cache_init
 
 ## Test Coverage
 
-The tests cover:
-
-- QueryCache initialization and configuration
-- SQL query building with various filter types
-- DuckDB cache operations (store, retrieve, remove)
-- Cache hit/miss scenarios with TTL expiration
-- Databricks SQL integration (mocked)
-- Error handling and edge cases
-- Integration workflows
+The tests cover QueryCache releated stuff since the purpose of this project is to implement an in-memory cache. They don't cover anything on the frontend.
 
 ## Fixtures
 
