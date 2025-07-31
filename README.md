@@ -60,6 +60,10 @@ make lint         # Run linting
 
 - Fork the repo
 - Replace the datawarehouse id in the databricks.yml file with the id of the datawarehouse you want to use.
+- `databricks bundle deploy`
+- `databricks bundle run dash-with-cache`
+
+If you want the github actions stuff, do the following:
 - Follow the steps in Apps cookbook to create a service principal and add the host, client id and secret to your github repo: https://apps-cookbook.dev/blog/automate-apps-deployments-dabs#preparing-your-service-principal
 - Pushed changes will trigger tests suite to run
 - On the github UI, create a release to trigger the pipeline to deploy the app to Databricks
