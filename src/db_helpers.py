@@ -18,13 +18,13 @@ cfg = Config()
 
 
 class QueryCache:
-    def __init__(self, db_config, http_path: str, max_size_mb: int, ttl: int = 120):
+    def __init__(self, db_config, http_path: str, max_size_mb: int, ttl: int = 24):
         self.max_size_mb = max_size_mb
         self.current_size_mb = 0
         self.duckdb = duckdb.connect(":memory:")
         self.db_config = db_config
         self.db_http_path = http_path
-        self.ttl = ttl  # Time to live in seconds
+        self.ttl = ttl  # Time to live in hours
         self.create_table_if_not_exists()
         self.check_and_manage_duckdb_size()
         self.baseline_query = """
@@ -123,7 +123,7 @@ class QueryCache:
             # Check if the result in DuckDB is not expired
             duckdb_timestamp = self.get_timestamp_from_duckdb(query_hash)
             if duckdb_timestamp and datetime.now() - duckdb_timestamp < timedelta(
-                seconds=self.ttl
+                hours=self.ttl
             ):
                 print("DuckDB Cache Hit: Query served from DuckDB cache.")
                 return result
@@ -246,7 +246,7 @@ def get_dbsql_connection():
     """
 
 
-query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=60 * 60 * 24)
+query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=24)
 
 # Example usage
 if __name__ == "__main__":
