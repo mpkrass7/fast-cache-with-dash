@@ -22,7 +22,7 @@ class TestQueryCache:
             db_config=mock_db_config,
             http_path="/sql/1.0/warehouses/test",
             max_size_mb=10,
-            ttl=60,
+            ttl=1,  # 1 hour for testing
         )
 
     def test_query_cache_initialization(self, mock_db_config):
@@ -226,7 +226,7 @@ class TestQueryCache:
         test_data = pd.DataFrame({"col1": [1, 2, 3]})
 
         # Store old data (expired)
-        old_timestamp = datetime.now() - timedelta(seconds=query_cache.ttl + 10)
+        old_timestamp = datetime.now() - timedelta(hours=query_cache.ttl + 1)
         query_cache.duckdb.execute(
             "INSERT INTO cached_queries VALUES (?, ?, ?, ?, ?, ?)",
             [query_hash, query, test_data.to_csv(index=False), old_timestamp, 0.001, 3],
