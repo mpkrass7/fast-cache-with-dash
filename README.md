@@ -4,6 +4,8 @@ Memoization is a technique used to speed up computer programs by storing the res
 
 This is a basic Dash web application that demonstrates **in-memory caching** of Databricks SQL queries on the **bakehouse schema** using DuckDB. 
 
+![Dashboard Screenshot](img/dash-cache.gif)
+
 ## 🚀 Quick Start
 
 Make sure you have a virtual environment with uv installed.

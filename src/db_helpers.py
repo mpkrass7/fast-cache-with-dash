@@ -239,13 +239,6 @@ class QueryCache:
         self.duckdb.close()
 
 
-@lru_cache(maxsize=1)
-def get_dbsql_connection():
-    """
-    Given an http path, return a connection to the Databricks SQL API.
-    """
-
-
 query_cache = QueryCache(cfg, http_path=http_path, max_size_mb=100, ttl=24)
 
 # Example usage
