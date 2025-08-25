@@ -9,7 +9,7 @@ import pytest
 # Add the parent directory to the path so we can import db_helpers
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from db_helpers import QueryCache, get_dbsql_connection
+from db_helpers import QueryCache
 
 
 class TestQueryCache:
@@ -406,12 +406,6 @@ class TestQueryCache:
         """Test closing the DuckDB connection"""
         query_cache.close()
         # Should not raise any exceptions
-
-    def test_lru_cache_decorator(self):
-        """Test the LRU cache decorator on get_dbsql_connection"""
-        # This is a basic test - the actual function is not implemented in the original code
-        # but we can test that the decorator is applied
-        assert hasattr(get_dbsql_connection, "__wrapped__")
 
 
 class TestIntegration:
