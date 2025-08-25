@@ -2,7 +2,6 @@ import hashlib
 import os
 import sys
 from datetime import datetime, timedelta
-from functools import lru_cache
 from io import StringIO
 
 import duckdb
