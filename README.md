@@ -53,6 +53,33 @@ make lint         # Run linting
 - `src/db_helpers.py` - Databricks connection & caching
 - `src/visualizations.py` - Chart & table components
 
+## 🚢 Deploy on Databricks
+
+Deploy your app to Databricks using the CLI:
+
+Set your environment variables in a `.env` file or export them directly:
+
+```bash
+# Create a new Databricks App
+databricks apps create $APP_NAME
+
+# Sync your local code to Databricks workspace
+databricks sync . $APP_WORKSPACE_PATH
+
+# Deploy the app from your workspace folder
+databricks apps deploy $APP_NAME --source-code-path $APP_WORKSPACE_PATH
+```
+
+Or use Databricks Asset Bundles for environment-specific deployments:
+
+```bash
+# Deploy to development environment
+databricks bundle deploy --target dev
+
+# Run the app
+databricks bundle run dash-with-cache
+```
+
 ## 📦 CI/CD
 
 - Github Actions are used to run tests and deploy the app to Databricks.
