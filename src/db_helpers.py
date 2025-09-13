@@ -1,6 +1,7 @@
 import hashlib
 import os
 import sys
+import time
 from datetime import datetime, timedelta
 from io import StringIO
 
@@ -11,7 +12,7 @@ from databricks.sdk.core import Config
 
 catalog = "samples"
 schema = "bakehouse"
-http_path = f"/sql/1.0/warehouses/{os.getenv('WAREHOUSE_ID', '072b588d901e6eed')}"
+http_path = f"/sql/1.0/warehouses/{os.getenv('WAREHOUSE_ID', '388276af36ab98ba')}"
 
 cfg = Config()
 
@@ -114,7 +115,7 @@ class QueryCache:
         """
         query = self.build_query(filters)
         query_hash = self.hash_query(query)
-
+        t1 = time.time()
         # Check if query is in DuckDB cache
         result = self.get_from_duckdb(query_hash)
 
@@ -125,6 +126,7 @@ class QueryCache:
                 hours=self.ttl
             ):
                 print("DuckDB Cache Hit: Query served from DuckDB cache.")
+                print(f"DuckDB Query Time: {round(time.time() - t1, 4)} seconds")
                 return result
             else:
                 # If expired, remove from DuckDB and query DBSQL
@@ -133,6 +135,7 @@ class QueryCache:
 
         # Query Postgres if not in cache or expired
         result = self.read_table_from_databricks_sql(query)
+        print(f"Databricks SQL Query Time: {round(time.time() - t1, 4)} seconds")
         size, records = sys.getsizeof(result) / (1024 * 1024), len(result)
         self.store_in_duckdb(query_hash, query, result, size, records)
         print("Databricks SQL Call: Query served from Databricks SQL.")

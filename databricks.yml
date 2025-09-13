@@ -4,7 +4,7 @@ bundle:
 resources:
   apps:
     dash-with-cache:
-      name: "dash-with-cache-app"
+      name: "dash-with-cache"
       source_code_path: ./src
       description: "A dash app for in memory caching of databricks sql queries"
       resources:
