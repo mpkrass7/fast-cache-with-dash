@@ -10,7 +10,7 @@ resources:
       resources:
         - name: "sql_warehouse"
           sql_warehouse:
-            id: "072b588d901e6eed"
+            id: "388276af36ab98ba"
             permission: CAN_USE
 
 targets:
@@ -18,7 +18,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-1720970340056130.10.azuredatabricks.net/
+      host: https://adb-3132409076304568.8.azuredatabricks.net/
     resources:
       apps:
         dash-with-cache:
@@ -28,7 +28,7 @@ targets:
   prod:
     mode: production
     workspace:
-      host: https://adb-1720970340056130.10.azuredatabricks.net/
+      host: https://adb-3132409076304568.8.azuredatabricks.net/
       root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
     permissions:
       - user_name: ${workspace.current_user.userName}

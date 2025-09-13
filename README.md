@@ -61,7 +61,7 @@ make lint         # Run linting
 ## 🌍 Reproducing in Another Environment
 
 - Fork the repo
-- Replace the datawarehouse id in the databricks.yml file with the id of the datawarehouse you want to use.
+- Replace the datawarehouse id and databricks host in the databricks.yml file with the id of the datawarehouse you want to use.
 - `databricks bundle deploy`
 - `databricks bundle run dash-with-cache`
 
