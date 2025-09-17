@@ -1,5 +1,7 @@
 # Fast Cache with Dash and DuckDB 📊
 
+Blog post [here](https://www.marshallpk.com/post/cache-duck-dash/).
+
 Memoization is a technique used to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
 
 This is a basic Dash web application that demonstrates **in-memory caching** of Databricks SQL queries on the **bakehouse schema** using DuckDB. 
